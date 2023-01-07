@@ -4,7 +4,7 @@ import 'firebase/compat/firestore';
 import 'firebase/compat/storage';
 
 const firebaseApp=firebase.initializeApp({
-    apiKey: "AIzaSyBEDuukjpHG9GZachgRJpgvd3EJtuUILjE",
+    apiKey: "api_key",//copy your api key here and other details
     authDomain: "instagram-clone-101.firebaseapp.com",
     projectId: "instagram-clone-101",
     storageBucket: "instagram-clone-101.appspot.com",
