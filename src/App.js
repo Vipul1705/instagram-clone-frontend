@@ -241,7 +241,8 @@ console.log("posts are >>>",posts);
           </div>
         )}
       </div>
-
+        <Box sx={{display:"flex",justifyContent:"center"}}>
+         
       <div className="app_posts">
         {posts.map((post) => (
           <Post
@@ -255,7 +256,7 @@ console.log("posts are >>>",posts);
           />
         ))}
       </div>
-
+      </Box>
       {user?.displayName ? (
         <ImageUpload username={user.displayName} />
       ) : (
