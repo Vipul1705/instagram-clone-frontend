@@ -9,10 +9,8 @@ import Modal from "@mui/material/Modal";
 import { Input } from "@mui/material";
 import ImageUpload from "./ImageUpload";
 import axios from "./axios";
-import Pusher from 'pusher-js';
-import Avatar from '@mui/material/Avatar';
-
-
+import Pusher from "pusher-js";
+import Avatar from "@mui/material/Avatar";
 
 const style = {
   position: "absolute",
@@ -79,23 +77,23 @@ function App() {
     };
   }, [user, username]);
 
-  const fetchPosts= async ()=>
-    await axios.get("/sync").then(response=>{
-    console.log(response);
-    setPosts(response.data)
-  });
-
-  useEffect(()=>{
-    const pusher = new Pusher(process.env.REACT_APP_PUSHER_API, {
-      cluster: 'ap2'
+  const fetchPosts = async () =>
+    await axios.get("/sync").then((response) => {
+      console.log(response);
+      setPosts(response.data);
     });
 
-    const channel = pusher.subscribe('posts');
-    channel.bind('inserted', function(data) {
-      console.log("data received ",data);
+  useEffect(() => {
+    const pusher = new Pusher(process.env.REACT_APP_PUSHER_API, {
+      cluster: "ap2",
+    });
+
+    const channel = pusher.subscribe("posts");
+    channel.bind("inserted", function (data) {
+      console.log("data received ", data);
       fetchPosts();
     });
-  },[])
+  }, []);
 
   // useEffect runs a piece of code baased on specific condition
   useEffect(() => {
@@ -115,7 +113,7 @@ function App() {
     fetchPosts();
   }, []); //it will runs once when app is load and every single time posts changes
 
-console.log("posts are >>>",posts);
+  console.log("posts are >>>", posts);
 
   const signUp = (event) => {
     event.preventDefault();
@@ -231,8 +229,10 @@ console.log("posts are >>>",posts);
         />
         {user ? (
           <div className="app_login">
-          <Button onClick={() => auth.signOut()}>Logout</Button>
-          <Button><Avatar className='post_avatar' alt={username} src="" /></Button>
+            <Button onClick={() => auth.signOut()}>Logout</Button>
+            <Button>
+              <Avatar className="post_avatar" alt={username} src="" />
+            </Button>
           </div>
         ) : (
           <div className="app_login">
@@ -241,27 +241,40 @@ console.log("posts are >>>",posts);
           </div>
         )}
       </div>
-        <Box sx={{display:"flex",justifyContent:"center"}}>
-         
-      <div className="app_posts">
-        {posts.map((post) => (
-          <Post
-            key={post._id}
-            postId={post._id}
-            user={user}
-            username={post.user}
-            caption={post.caption}
-            imageUrl={post.image}
-            // avatarUrl={post.avatarUrl}
-          />
-        ))}
-      </div>
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <div className="app_posts">
+          {posts.map((post) => (
+            <Post
+              key={post._id}
+              postId={post._id}
+              user={user}
+              username={post.user}
+              caption={post.caption}
+              imageUrl={post.image}
+              // avatarUrl={post.avatarUrl}
+            />
+          ))}
+        </div>
       </Box>
-      {user?.displayName ? (
-        <ImageUpload username={user.displayName} />
-      ) : (
-        <h3>Sorry you need to login to upload</h3>
-      )}
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          position: "sticky",
+          objectFit: "contain",
+          zIndex: "1",
+          overflow: "hidden",
+          bottom: "0",
+          backroundColor: "white",
+          border: "1px solid lightgray",
+        }}
+      >
+        {user?.displayName ? (
+          <ImageUpload username={user.displayName} />
+        ) : (
+          <h3>Sorry you need to login to upload</h3>
+        )}
+      </Box>
       {/* 
         <Post username='vipul' caption='qwertyuiop' imageUrl='https://reactjs.org/logo-og.png' avatarUrl='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTm-KJMECWJvjbROgmX9cEk8JNFy9lrYNrBP1FV7oZPw&s'/>
         <Post username='rajesh' caption='asdfghjkl' imageUrl='https://reactjs.org/logo-og.png'avatarUrl='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTm-KJMECWJvjbROgmX9cEk8JNFy9lrYNrBP1FV7oZPw&s'/>
