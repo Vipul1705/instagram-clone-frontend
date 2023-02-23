@@ -3,40 +3,86 @@ import './Post.css'
 import Avatar from '@mui/material/Avatar';
 import { db } from './firebase';
 import firebase from 'firebase/compat/app';
+import axios from "./axios";
+import Pusher from "pusher-js";
 
 function Post({username ,caption , imageUrl, avatarUrl, postId, user }) {
 
   const [comments,setComments]=useState([]);
   const [comment,setComment]=useState('');
 
+  const fetchComments=async(postId)=>{
+    await axios.get(`/post/comments/${postId}`).then((response)=>{
+      console.log(response.data);
+      setComments(response.data.comments);
+    }).catch((error)=>{
+      console.log(error);
+    })
+  }
+
   useEffect(()=>{
-    let unsubcribe;
+    // let unsubcribe;
     if(postId){
-      unsubcribe=db
-      .collection("posts")
-      .doc(postId)
-      .collection("comments")
-      .orderBy('timestamp','desc')
-      .onSnapshot((snapshot)=>{
-        setComments(snapshot.docs.map((doc)=>doc.data()))
-      })
+      fetchComments(postId);
+    //   unsubcribe=db
+    //   .collection("posts")
+    //   .doc(postId)
+    //   .collection("comments")
+    //   .orderBy('timestamp','desc')
+    //   .onSnapshot((snapshot)=>{
+    //     setComments(snapshot.docs.map((doc)=>doc.data()))
+    //   })
     }
 
-    return ()=>{
-      unsubcribe();
-    }
+    // return ()=>{
+    //   unsubcribe();
+    // }
   },[postId])
 
   const postComment=(event)=>{
     event.preventDefault();
 
-    db.collection("posts").doc(postId).collection("comments").add({
-      text: comment,
-      username: user.displayName,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    // db.collection("posts").doc(postId).collection("comments").add({
+    //   text: comment,
+    //   username: user.displayName,
+    //   timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    // });
+    // setComment('');
+    var data=JSON.stringify({
+      comment:{
+        text:comment,
+        username:user.displayName,
+        timestamp:Date.now(),
+      },
     });
-    setComment('');
+
+    var config={
+      method:"put",
+      maxBodyLength:Infinity,
+      url:`${process.env.REACT_APP_BASE_URL}/add-comment/post/${postId}`
+      ,
+      headers:{
+        "Content-Type":"application/json",
+      },
+      data:data, 
+      };
+
+      await axios(config).then((response)=>{
+        fetchComments();
+      }).catch((error)=>{console.log(error);});
+
+      setComment("");
   }
+useEffect(()=>{
+  const pusher=new Pusher(process.env.REACT_APP_PUSHER_API,{
+    cluster:"ap2",
+  });
+  const channel=pusher.subscribe("comments");
+  channel.bind("updated",function(data){
+    console.log("data received comments",data);
+    fetchComments();
+  });
+},[]);
 
   return (
     <div className='post'>

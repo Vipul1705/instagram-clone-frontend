@@ -86,7 +86,7 @@ function App() {
   });
 
   useEffect(()=>{
-    const pusher = new Pusher('eb7f469a56093781c7d8', {
+    const pusher = new Pusher(process.env.REACT_APP_PUSHER_API, {
       cluster: 'ap2'
     });
 
