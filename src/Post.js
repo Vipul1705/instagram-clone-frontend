@@ -39,7 +39,7 @@ function Post({username ,caption , imageUrl, avatarUrl, postId, user }) {
     // }
   },[postId])
 
-  const postComment=(event)=>{
+  const postComment=async(event)=>{
     event.preventDefault();
 
     // db.collection("posts").doc(postId).collection("comments").add({
