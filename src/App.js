@@ -265,7 +265,7 @@ function App() {
           zIndex: "1",
           overflow: "hidden",
           bottom: "0",
-          backroundColor: "white",
+          backgroundColor: "white",
           border: "1px solid lightgray",
         }}
       >
